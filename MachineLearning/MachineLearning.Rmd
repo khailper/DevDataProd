@@ -1,0 +1,66 @@
+---
+title: "MachineLearning"
+author: "khailper"
+date: "October 21, 2015"
+output: html_document
+---
+
+We start by loading and processing the traing and test data sets.  We will subset the data so to remove the time variables.  Ideally, the time information could be useful if it was formatted in a way that allowed us to pick up where in a stretch the subject was (for example, they might start out doing the stretch correctly, but slip up as time went on).  However, since the data is not well formatted, it is more likely to contribute to overfitting.  We also get any columns that are all NAs.  Finally we imput value to the NAs.  We assign -500, as that should put it outside the range of values.  This is done instead of a method like replacing with the average since many of the columns are so heavy NA that trying to find a pattern is likely to produce errors. 
+
+```{r read data, cache=TRUE}
+#read and process trainign data
+traindata <- read.csv("~/pml-training.csv", na.strings = c("NA","", "#DIV/0!"))
+traindata <- traindata[, -(3:5)]
+#using 1 as the start for allna as its the id variable
+allna <- 1
+for (i in 1: length(names(traindata))){
+        if (sum(!is.na(traindata[,i])) == 0){
+                allna <- c(allna,i)
+        }
+}
+traindata <- traindata[, -allna]
+traindata[is.na(traindata)] <- -500
+
+#read and process testing data
+testing <- read.csv("~/pml-testing.csv", na.strings = c("NA","", "#DIV/0!"))
+#also dropping problem-id variable
+testing <- testing[, -(c(3:5, 160))]
+testing <- testing[, -allna]
+testing[is.na(testing)] <- -500
+#make sure test factor variables have same levels as training.
+for (i in 1:length(names(testing))){
+        if (length(levels(testing[,i])) != 0){
+                levels(testing[,i]) <- levels(traindata[,i])
+        }
+}
+```
+
+
+In order to get an estimate of the out-of-sample error, we split the training data into training and cross-validation data sets.
+```{r split, cache = TRUE}
+library(caret)
+set.seed(1234)
+inTrain <- createDataPartition(y = traindata$classe, p = 0.75, list = FALSE)
+training <- traindata[inTrain,]
+crossval <- traindata[-inTrain,]
+```
+
+Now we use the trainging data to build a random forests model.
+```{r build model, cache=TRUE}
+library(randomForest)
+set.seed(3456)
+trainmod <- randomForest(classe ~., data = training)
+```
+
+Now, in order to estimate the out of sample error, we use the mod we created on the cross-validation data.
+```{r cross-val, cache=TRUE}
+cvpred <- predict(trainmod,crossval)
+confusionMatrix(cvpred, crossval$classe)
+```
+
+Based on this, we estimate the out-of-sample error rate to be 0.29%.
+
+Finally, we use our model to predict the outcomes of the test data
+```{r predict, cache=TRUE}
+predict(trainmod,testing)
+```
