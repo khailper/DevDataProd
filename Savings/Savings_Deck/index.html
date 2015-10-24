@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Savings Recommendation App</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Savings Recommendation App">
+  <meta name="author" content="khailper">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Savings Recommendation App</h1>
+    <h2></h2>
+    <p>khailper<br/>student</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Introduction</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Based on Helaine Olen and Harold Pollack&#39;s finincial advice index card
+(<a href="http://www.washingtonpost.com/blogs/wonkblog/wp/2013/09/16/this-4x6-index-card-has-all-the-financial-advice-youll-ever-need">http://www.washingtonpost.com/blogs/wonkblog/wp/2013/09/16/this-4x6-index-card-has-all-the-financial-advice-youll-ever-need</a>)</li>
+<li>Main recommendations are to save 20% of you income and max out your 401(k) or equivalent.</li>
+<li>In their book they&#39;ve changed this to 10-20%.</li>
+<li>The purpose of the app is to give people a recommended savings level based on that advise given their weekly income.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Methodolgy</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Take users weekly income and whether or nor their has some sort of savings match to provide a recommended savings so that total savings (savings + match) is within the 10-20% guideline</li>
+</ul>
+
+<pre><code class="r">##lower end of the range
+lowersave &lt;- function(income, match){
+        ifelse(match == &quot;No&quot;,income * .1, income * .05)
+}
+
+##upper end of the range
+uppersave &lt;- function(income, match){
+        ifelse(match == &quot;No&quot;,income * .2, income * .1)
+}
+
+##function to return the advice
+advice &lt;- function(income, match){
+        paste(&quot;$&quot;, lowersave(income, match), &quot; to $&quot;, uppersave(income, match), collapse = &quot;&quot;)
+}
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>For example, if someone made $1000/week but didn&#39;t have access to a 40(k):</p>
+
+<pre><code class="r">advice(1000, &quot;No&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;$ 100  to $ 200&quot;
+</code></pre>
+
+<p>But if their employer did offer one:</p>
+
+<pre><code class="r">advice(1000, &quot;Yes&quot;)
+</code></pre>
+
+<pre><code>## [1] &quot;$ 50  to $ 100&quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Assumptions/Limitations</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>US-centric (savings assumptions based on Social Security/Medicare as amount of social insurance)</li>
+<li>Doesn&#39;t have a way to account for an employer- provided defined-benefit</li>
+<li>Assumes that main focus of savings is retirement; already taken have a rainy fund, don&#39;t need to save for kid&#39;s college</li>
+<li>Assumes match doesn&#39;t cap out before 10% of income</li>
+<li>Assumes that advisee made reasonable savings choices in the past and doesn&#39;t need to make up for low savings</li>
+<li>Assumes that person can afford to adjust there budget around that savings level</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Introduction'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Methodolgy'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Example'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Assumptions/Limitations'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
